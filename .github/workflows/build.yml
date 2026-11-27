@@ -36,6 +36,18 @@ jobs:
           Write-Host "---- код возврата: $code ----"
           exit $code
 
+      - name: Скриншоты интерфейса
+        shell: pwsh
+        run: |
+          # --preview рисует окно программы в PNG на демо-данных.
+          # 01 и 02 — настоящие снимки, их не трогаем.
+          New-Item -ItemType Directory -Force -Path docs\screenshots | Out-Null
+          $dll = ".\bin\Release\net8.0-windows\HvBackup.dll"
+          dotnet $dll --preview "docs\screenshots\03-nastroyki.png" --settings
+          dotnet $dll --preview "docs\screenshots\04-vosstanovlenie.png" --restore
+          dotnet $dll --preview "docs\screenshots\05-raspisanie.png" --schedule
+          Get-ChildItem docs\screenshots\*.png | Select-Object Name,Length
+
       - name: Отчёт
         run: Get-ChildItem .\bin\Release\net8.0-windows\HvBackup.exe | Select-Object Name,Length
 
