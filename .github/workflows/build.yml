@@ -6,6 +6,9 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -47,6 +50,26 @@ jobs:
           dotnet $dll --preview "docs\screenshots\04-vosstanovlenie.png" --restore
           dotnet $dll --preview "docs\screenshots\05-raspisanie.png" --schedule
           Get-ChildItem docs\screenshots\*.png | Select-Object Name,Length
+
+      - name: Сохранить скриншоты в репозиторий
+        shell: pwsh
+        run: |
+          # Скриншоты 01 и 02 — настоящие снимки, не трогаем.
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/screenshots/03-nastroyki.png docs/screenshots/04-vosstanovlenie.png docs/screenshots/05-raspisanie.png
+          if (git diff --staged --quiet) {
+            Write-Host "Скриншоты не изменились"
+          } else {
+            git commit -m "docs: обновление скриншотов [skip ci]"
+            git push
+          }
+
+      - name: Артефакт скриншотов
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: docs/screenshots/*.png
 
       - name: Отчёт
         run: Get-ChildItem .\bin\Release\net8.0-windows\HvBackup.exe | Select-Object Name,Length
