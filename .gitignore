@@ -1,0 +1,17 @@
+# Сборка
+bin/
+obj/
+out/
+publish/
+publish2/
+
+# Visual Studio / Rider / VS Code
+.vs/
+.idea/
+*.user
+*.suo
+*.userprefs
+
+# Локальные файлы
+*.log
+Thumbs.db

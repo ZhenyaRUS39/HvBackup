@@ -1,0 +1,46 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Сборка
+        run: dotnet build HvBackup.csproj -c Release -v minimal
+
+      - name: Самопроверка
+        shell: pwsh
+        run: |
+          # exe помечен requireAdministrator: в CI UAC-эскалация не пройдёт.
+          # Запускаем через dotnet — манифест на управляемую сборку не действует.
+          chcp 65001 > $null
+          [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+          $env:DOTNET_NOLOGO = '1'
+          dotnet .\bin\Release\net8.0-windows\HvBackup.dll --selftest
+          $code = $LASTEXITCODE
+          Write-Host "---- подробный отчёт (UTF-8) ----"
+          $f = Join-Path $env:TEMP 'hvbackup-selftest.txt'
+          if (Test-Path $f) { Get-Content $f -Encoding UTF8 }
+          Write-Host "---- код возврата: $code ----"
+          exit $code
+
+      - name: Отчёт
+        run: Get-ChildItem .\bin\Release\net8.0-windows\HvBackup.exe | Select-Object Name,Length
+
+      - name: Артефакт
+        uses: actions/upload-artifact@v4
+        with:
+          name: HvBackup-win-x64
+          path: bin/Release/net8.0-windows/HvBackup.exe

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>HvBackup</AssemblyName>
+    <RootNamespace>HvBackup</RootNamespace>
+    <Version>1.19.0</Version>
+    <Product>ГиперВ Резерв — горячее резервное копирование ВМ Hyper-V</Product>
+    <ApplicationManifest Condition=" '$(NoElevation)' != 'true' ">app.manifest</ApplicationManifest>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <ApplicationDefaultFont>Segoe UI, 9pt</ApplicationDefaultFont>
+    <SatelliteResourceLanguages>ru;en</SatelliteResourceLanguages>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+</Project>
